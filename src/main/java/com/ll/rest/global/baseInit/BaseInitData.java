@@ -27,7 +27,7 @@ public class BaseInitData {
 
     @Transactional
     public void work1() {
-        if (postService.count() == 0) return;
+        if (postService.count() > 0) return;
 
         Post post1 = postService.write("축구 하실 분?", "14시 까지 22명을 모아야 합니다.");
         Post post2 = postService.write("배구 하실 분?", "15시 까지 12명을 모아야 합니다.");
