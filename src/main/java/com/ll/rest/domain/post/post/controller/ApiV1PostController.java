@@ -8,8 +8,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,16 +36,14 @@ public class ApiV1PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<RsData<Void>> deleteItem(@PathVariable long id) {
+    public RsData<Void> deleteItem(@PathVariable long id) {
         Post post = postService.findById(id).get();
         postService.delete(post);
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new RsData<>(
-                        "200-1",
-                        "%d번 글이 삭제되었습니다.".formatted(post.getId())
-                ));
+        return new RsData<>(
+                "200-1",
+                "%d번 글이 삭제되었습니다.".formatted(post.getId())
+        );
     }
 
     record PostModifyReqBody(
@@ -85,20 +81,18 @@ public class ApiV1PostController {
     record PostWriteResBody(PostDto item, long totalCount) { }
 
     @PostMapping
-    public ResponseEntity<RsData<PostWriteResBody>> writeItem(
+    public RsData<PostWriteResBody> writeItem(
             @RequestBody @Valid PostWriteReqBody reqBody
     ) {
         Post post = postService.write(reqBody.title, reqBody.content);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new RsData<>(
-                        "200-1",
-                        "%d번 글이 작성되었습니다.".formatted(post.getId()),
-                        new PostWriteResBody(
-                                new PostDto(post),
-                                postService.count()
-                        )
-                ));
+        return new RsData<>(
+                "200-1",
+                "%d번 글이 작성되었습니다.".formatted(post.getId()),
+                new PostWriteResBody(
+                        new PostDto(post),
+                        postService.count()
+                )
+        );
     }
 }
