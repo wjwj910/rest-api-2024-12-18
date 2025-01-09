@@ -26,6 +26,7 @@ public class BaseInitData {
     public ApplicationRunner baseInitDataApplicationRunner() {
         return args -> {
             self.work1();
+            self.work2();
         };
     }
 
