@@ -15,12 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Configuration
 @RequiredArgsConstructor
 public class BaseInitData {
+    private final MemberService memberService;
     private final PostService postService;
     @Autowired
     @Lazy
     private BaseInitData self;
-    @Autowired
-    private MemberService memberService;
 
     @Bean
     public ApplicationRunner baseInitDataApplicationRunner() {
@@ -32,16 +31,6 @@ public class BaseInitData {
 
     @Transactional
     public void work1() {
-        if (postService.count() > 0) return;
-
-        Post post1 = postService.write("축구 하실 분?", "14시 까지 22명을 모아야 합니다.");
-        Post post2 = postService.write("배구 하실 분?", "15시 까지 12명을 모아야 합니다.");
-        Post post3 = postService.write("농구 하실 분?", "16시 까지 10명을 모아야 합니다.");
-
-    }
-
-    @Transactional
-    public void work2() {
         if (memberService.count() > 0) return;
 
         Member memberSystem = memberService.join("system", "1234", "시스템");
@@ -49,6 +38,17 @@ public class BaseInitData {
         Member memberUser1 = memberService.join("user1", "1234", "유저1");
         Member memberUser2 = memberService.join("user2", "1234", "유저2");
         Member memberUser3 = memberService.join("user3", "1234", "유저3");
+    }
 
+    @Transactional
+    public void work2() {
+        if (postService.count() > 0) return;
+
+        Member memberUser1 = memberService.findByUsername("user1").get();
+        Member memberUser2 = memberService.findByUsername("user2").get();
+
+        Post post1 = postService.write(memberUser1, "축구 하실 분?", "14시 까지 22명을 모아야 합니다.");
+        Post post2 = postService.write(memberUser1, "배구 하실 분?", "15시 까지 12명을 모아야 합니다.");
+        Post post3 = postService.write(memberUser2, "농구 하실 분?", "16시 까지 10명을 모아야 합니다.");
     }
 }
